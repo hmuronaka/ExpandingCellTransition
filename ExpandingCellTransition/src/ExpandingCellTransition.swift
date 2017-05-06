@@ -10,7 +10,7 @@ import UIKit
 
 open class ExpandingCellTransition: NSObject, UIViewControllerTransitioningDelegate, UIViewControllerAnimatedTransitioning {
     
-    public enum PresentationStyle {
+    fileprivate enum PresentationStyle {
         case present, dismiss
     }
     
