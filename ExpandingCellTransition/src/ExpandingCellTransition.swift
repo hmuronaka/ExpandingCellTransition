@@ -53,7 +53,12 @@ open class ExpandingCellTransition: NSObject, UIViewControllerTransitioningDeleg
         let parentViewOfTableView:UIView! = (self.presentationStyle == .present ? fromView : toView)
         let tableViewImage = parentViewOfTableView.ts_toImage()
         
-        let tappedCellRect = tableView.ts_rectFromParent(at: tappedCellIndex)
+        // 親ビューからのtableViewの相対座標を取得する。
+        let tableViewFrame = tableView.convert(tableView.bounds, to: parentViewOfTableView)
+        // tableViewからのタップされたセルの座標を取得する。
+        var tappedCellRect = tableView.ts_rectFromParent(at: tappedCellIndex)
+        // 親ビューからのcellの座標を取得する。
+        tappedCellRect.origin.y += tableViewFrame.origin.y
         
         // top rect
         let fromTopRect = CGRect(x: 0, y: 0, width: fromView.frame.width, height: tappedCellRect.origin.y)
@@ -82,6 +87,7 @@ open class ExpandingCellTransition: NSObject, UIViewControllerTransitioningDeleg
             bottomImageView.frame = fromBottomRect
             
             toView.frame = tappedCellRect
+            toView.alpha = 0.90
             containerView.addSubview(cellImageView)
             containerView.addSubview(toView)
             containerView.addSubview(topImageView)
@@ -89,13 +95,14 @@ open class ExpandingCellTransition: NSObject, UIViewControllerTransitioningDeleg
             
             fromView.removeFromSuperview()
             
-            UIView.animate(withDuration: duration, animations: { 
+            UIView.animate(withDuration: duration, animations: {
                 topImageView.frame = toTopRect
                 bottomImageView.frame = toBottomRect
                 cellImageView.frame = toCellRect
                 cellImageView.alpha = 0.0
                 fromView.alpha = 0.0
                 toView.frame = toViewControllerFinalFrame
+                toView.alpha = 1.0
             }) { [unowned self] isFinish in
                 if isFinish {
                     containerView.addSubview(toView)
@@ -108,6 +115,13 @@ open class ExpandingCellTransition: NSObject, UIViewControllerTransitioningDeleg
                 }
             }
         case .dismiss:
+            
+            let fromViewImage = fromView.ts_toImage()
+            let imageView = UIImageView(image: fromViewImage)
+            imageView.contentMode = .topLeft
+            containerView.addSubview(imageView)
+            fromView.removeFromSuperview()
+            
             topImageView.frame = toTopRect
             bottomImageView.frame = toBottomRect
             cellImageView.frame = toCellRect
@@ -115,20 +129,23 @@ open class ExpandingCellTransition: NSObject, UIViewControllerTransitioningDeleg
             containerView.addSubview(topImageView)
             containerView.addSubview(bottomImageView)
             containerView.addSubview(cellImageView)
+            
             toView.frame = toViewControllerFinalFrame
             cellImageView.alpha = 0.0
             
             UIView.animate(withDuration: self.duration, animations: {
+                imageView.frame = tappedCellRect
                 topImageView.frame = fromTopRect
                 bottomImageView.frame = fromBottomRect
                 cellImageView.frame = fromCellRect
-                fromView.frame = tappedCellRect
+                imageView.alpha = 5.0
                 cellImageView.alpha = 1.0
             }) { [unowned self] isFinish in
                 containerView.addSubview(toView)
                 topImageView.removeFromSuperview()
                 bottomImageView.removeFromSuperview()
                 cellImageView.removeFromSuperview()
+                imageView.removeFromSuperview()
                 transitionContext.completeTransition(true)
                 self.presentationStyle = .present
             }
