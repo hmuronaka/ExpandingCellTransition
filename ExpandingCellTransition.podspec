@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "ExpandingCellTransition"
-  s.version      = "0.0.3"
+  s.version      = "0.0.4"
   s.summary      = "Transition for UIViewController has UITableView"
   s.homepage     = "https://github.com/hmuronaka/ExpandingCellTransition"
   s.license      = { :type => "MIT", :file => "LICENSE" }
