@@ -27,10 +27,12 @@ open class ExpandingCellTransition: NSObject, UIViewControllerTransitioningDeleg
     
     
     open func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        self.presentationStyle = .present
         return self
     }
     
     open func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        self.presentationStyle = .dismiss
         return self
     }
     
@@ -111,7 +113,6 @@ open class ExpandingCellTransition: NSObject, UIViewControllerTransitioningDeleg
                     cellImageView.removeFromSuperview()
                     fromView.alpha = 1.0
                     transitionContext.completeTransition(true)
-                    self.presentationStyle = .dismiss
                 }
             }
         case .dismiss:
@@ -147,7 +148,6 @@ open class ExpandingCellTransition: NSObject, UIViewControllerTransitioningDeleg
                 cellImageView.removeFromSuperview()
                 imageView.removeFromSuperview()
                 transitionContext.completeTransition(true)
-                self.presentationStyle = .present
             }
         }
     }
